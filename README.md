@@ -93,7 +93,7 @@ Worker.run_async(funcref(weak_callable, "call_func"))
 
 ### Iterators
 
-The Iter classes take an iterator and do small amounts of work at a time. They take an iterator and a `FuncRef` which should take 1 argument.
+The Iter classes take an iterator and performs small amounts of work at a time. They take an iterator and a `FuncRef` which should take 1 argument.
 The above function should be refactored like so:
 
 ```gdscript
