@@ -2,8 +2,10 @@ tool
 extends EditorPlugin
 
 func _enter_tree():
-    pass
-
+	pass
 
 func _exit_tree():
-    pass
+	pass
+
+func get_plugin_icon() -> Texture:
+	return preload("icon.png")
