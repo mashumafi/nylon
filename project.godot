@@ -1,0 +1,68 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Reference",
+"class": "BatchIter",
+"language": "GDScript",
+"path": "res://addons/nylon/core/batch_iter.gd"
+}, {
+"base": "Reference",
+"class": "TimedCallable",
+"language": "GDScript",
+"path": "res://addons/nylon/core/timed_callable.gd"
+}, {
+"base": "Reference",
+"class": "TimedIter",
+"language": "GDScript",
+"path": "res://addons/nylon/core/timed_iter.gd"
+}, {
+"base": "Reference",
+"class": "TimedResume",
+"language": "GDScript",
+"path": "res://addons/nylon/core/timed_resume.gd"
+}, {
+"base": "Reference",
+"class": "WeakCallable",
+"language": "GDScript",
+"path": "res://addons/nylon/core/weak_callable.gd"
+} ]
+_global_script_class_icons={
+"BatchIter": "",
+"TimedCallable": "",
+"TimedIter": "",
+"TimedResume": "",
+"WeakCallable": ""
+}
+
+[application]
+
+config/name="Worker"
+run/main_scene="res://test.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+Worker="*res://addons/nylon/core/worker.gd"
+
+[editor_plugins]
+
+enabled=PoolStringArray(  )
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+quality/driver/driver_name="GLES2"
+vram_compression/import_etc=true
+vram_compression/import_etc2=false
+environment/default_environment="res://default_env.tres"
