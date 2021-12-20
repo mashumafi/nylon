@@ -58,10 +58,18 @@ class Coroutine:
             self._callable = null
             self.emit_signal("completed", self._result)
 
+    # cancel(finish_resuming: bool)
+    # Cancels processing of the coroutine
+    # finish_resuming (bool): true will allow function to `resume` until completion, false will destroy the function state
+    func cancel(finish_resuming := false) -> void:
+        self._callable = null
+        if not finish_resuming:
+            _update_state(null)
+
     # is_valid() -> bool
     # Returns true if calling `resume()` would change the state
     func is_valid() -> bool:
-        return self._callable != null
+        return self._callable != null or self._state is GDScriptFunctionState
 
 enum WorkerProcessMode {IDLE, PHYSICS}
 export(WorkerProcessMode) var process_mode := WorkerProcessMode.IDLE setget set_process_mode, get_process_mode

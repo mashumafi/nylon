@@ -24,6 +24,7 @@ class Sum:
 
     func increment(num: int):
         count += num
+        return float(count)
 
 class WeakTest:
     extends Reference
@@ -67,13 +68,27 @@ func _ready() -> void:
     var sum := Sum.new()
     var batch_iter := BatchIter.new([1, 1, 2, 3, 5], funcref(sum, "increment"), 2)
     var batch_job := Worker.run_async(funcref(batch_iter, "call_func"))
-    yield(batch_job, "completed")
+    assert(yield(batch_job, "completed") == 12.0)
     assert(sum.count == 12)
+
+    var cancel_job := Worker.run_async(funcref(batch_iter, "call_func"))
+    yield(cancel_job, "started")
+    yield(get_tree(), "idle_frame") # Cannot cancel while handling `started` signal
+    cancel_job.cancel(false) # emits `ended`
+    assert(yield(cancel_job, "completed") == null) # no result since it was cancelled
+    assert(sum.count == 14)
+
+    var cancel_job_wait := Worker.run_async(funcref(batch_iter, "call_func"))
+    yield(cancel_job_wait, "started")
+    yield(get_tree(), "idle_frame") # Cannot cancel while handling `started` signal
+    cancel_job_wait.cancel(true)
+    assert(yield(cancel_job_wait, "ended") == 26.0) # `completed` won't be called
+    assert(sum.count == 26)
 
     var timed_iter := TimedIter.new([1, 1, 2, 3, 5], funcref(sum, "increment"), 0.01)
     var timed_iter_job := Worker.run_async(funcref(timed_iter, "call_func"))
-    yield(timed_iter_job, "completed")
-    assert(sum.count == 24)
+    assert(yield(timed_iter_job, "completed") == 38.0)
+    assert(sum.count == 38)
 
     print("waiting...")
     var timed_start := TimedResume.new(funcref(self, "print_wait"), 5)

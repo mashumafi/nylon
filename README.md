@@ -121,6 +121,22 @@ var timed_iter := TimedIter.new(get_children(), funcref(self, "update_node"), 2)
 Worker.run_async(funcref(timed_iter, "call_func"))
 ```
 
+### Cancelling
+
+You may want to cancel existing coroutines for reasons such as:
+* Stop them from running forever
+* The result is no longer needed
+
+Nylon will stop processing a coroutine if at any point it returns exactly `true`.
+Another option is to use the `cancel` method on `Coroutine` which is returned by `Worker.run_async(coroutine, retry)`.
+`cancel` can be used to stop processing entirely or to allow processing to finish resuming a function to it's final result.
+
+```gdscript
+var job := Worker.run_async(coroutine, retry)
+job.cancel(true) # Allow job to finish resuming it's current state, emits `ended` on the next frame but never emits `completed`
+job.cancel(false) # Immediately terminates a job, emits `ended` once called and `completed` emits on the next frame
+```
+
 ## Future
 
 The goal is to extend Nylon to support flexible and easy to build coroutines with it's core.

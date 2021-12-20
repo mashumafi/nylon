@@ -21,8 +21,10 @@ func _init(iterator, callable: FuncRef, batch_size := 9223372036854775807):
 # Call `callable` on each item in `iterator` in chunks based on `batch_size`
 # If `callable` returns a `GDScriptFunctionState` each `resume` will increment count by 1
 # If `callable` returns an `int` then increment the count by that amount
+# Returns the final result
 func call_func():
     var count := 0
+    var final_result = null
     for item in iterator:
         var result = callable.call_func(item)
         while result is GDScriptFunctionState:
@@ -34,7 +36,9 @@ func call_func():
         if result is int:
             count += result
         else:
+            final_result = result
             count += 1
         if count >= batch_size:
             yield()
             count = 0
+    return final_result

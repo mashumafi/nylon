@@ -19,8 +19,10 @@ func _init(iterator, callable: FuncRef, timeout := 0):
 
 # call_func()
 # Call `callable` on each item in `iterator` in chunks based on `timeout`
+# Returns the final result
 func call_func():
     var end_time := OS.get_system_time_msecs() + timeout
+    var final_result = null
     for item in iterator:
         var result = callable.call_func(item)
         while result is GDScriptFunctionState:
@@ -28,6 +30,8 @@ func call_func():
             if OS.get_system_time_msecs() >= end_time:
                 yield()
                 end_time = OS.get_system_time_msecs() + timeout
+        final_result = result
         if OS.get_system_time_msecs() >= end_time:
             yield()
             end_time = OS.get_system_time_msecs() + timeout
+    return final_result
