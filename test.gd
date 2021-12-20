@@ -50,7 +50,7 @@ func _ready() -> void:
         yield(repeat_job, "ended")
     yield(repeat_job, "completed")
 
-    var loader := InteractiveLoader.new(["icon.png"])
+    var loader := InteractiveLoader.new(["addons/nylon/icon.png"])
     var load_job := Worker.run_async(funcref(loader, "load_interactive"))
     var res = yield(load_job, "completed")
     print(res)
