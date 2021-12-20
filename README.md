@@ -65,13 +65,61 @@ You can build complex hierarchy of coroutines, here are a few that come with Nyl
 Adds a delay before calling the coroutine. This delay occurs before each retry.
 This works similar to `get_tree().create_timer(timeout)` or the `Timer` class.
 
+```gdscript
+# Update 1 node per frame after a 500 millisecond delay
+var timed_callable := TimedCallable.new(funcref(self, "update_nodes"), 500)
+Worker.run_async(funcref(timed_callable, "call_func"))
+```
+
 ### TimedResume
 
 Adds a delay after each `yield`. This allows workers to take breaks between chunks.
 
+```gdscript
+# Update 1 node every 50 milliseconds
+var timed_resume := TimedResume.new(funcref(self, "update_nodes"), 50)
+Worker.run_async(funcref(timed_resume, "call_func"))
+```
+
 ### WeakCallable
 
 Safely call coroutines of a `WeakRef`.
+
+```gdscript
+# Update nodes until `self` is no longer valid
+var weak_callable := WeakCallable.new(weakref(self), "update_nodes")
+Worker.run_async(funcref(weak_callable, "call_func"))
+```
+
+### Iterators
+
+The Iter classes take an iterator and do small amounts of work at a time. They take an iterator and a `FuncRef` which should take 1 argument.
+The above function should be refactored like so:
+
+```gdscript
+func update_node(node: Node):
+    update_child(child)
+```
+
+#### BatchIter
+
+Call `callable` on each item in `iterator` in chunks based on `batch_size`
+
+```gdscript
+# Update 2 nodes per frame
+var batch_iter := BatchIter.new(get_children(), funcref(self, "update_node"), 2)
+Worker.run_async(funcref(batch_iter, "call_func"))
+```
+
+#### TimedIter
+
+Call `callable` on each item in `iterator` in chunks based on `timeout`
+
+```gdscript
+# Update nodes until 2 milliseconds elapse
+var timed_iter := TimedIter.new(get_children(), funcref(self, "update_node"), 2)
+Worker.run_async(funcref(timed_iter, "call_func"))
+```
 
 ## Future
 
