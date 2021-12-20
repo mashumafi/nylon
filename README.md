@@ -133,7 +133,7 @@ Another option is to use the `cancel` method on `Coroutine` which is returned by
 
 ```gdscript
 var job := Worker.run_async(coroutine, retry)
-job.cancel(true) # Allow job to finish resuming it's current state, emits `ended` on the next frame but never emits `completed`
+job.cancel(true) # Allow job to finish resuming it's current state, emits `ended` once finished but never emits `completed`
 job.cancel(false) # Immediately terminates a job, emits `ended` once called and `completed` emits on the next frame
 ```
 
