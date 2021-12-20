@@ -46,7 +46,7 @@ _global_script_class_icons={
 
 config/name="Worker"
 run/main_scene="res://test.tscn"
-config/icon="res://icon.png"
+config/icon="res://addons/nylon/icon.png"
 
 [autoload]
 
@@ -54,7 +54,7 @@ Worker="*res://addons/nylon/core/worker.gd"
 
 [editor_plugins]
 
-enabled=PoolStringArray(  )
+enabled=PoolStringArray( "res://addons/nylon/plugin.cfg" )
 
 [physics]
 
