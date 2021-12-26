@@ -4,17 +4,20 @@
 class_name TimedIter
 extends Reference
 
+const Callable := preload("callable.gd")
+
 var iterator
-var callable: FuncRef
+var callable: Callable
 var timeout := 0
 
-# TimedIter.new(iterator: Iterator, callable: FuncRef, timeout : int)
+# TimedIter.new(iterator: Iterator, instance: Object, funcname: String, timeout : int)
 # iterator (Iterator): The iterator to call functions on
-# callable (FuncRef): The method to call
+# instance (Object): object to call a function
+# funcname (String): name of the function to call
 # timeout (int): Time in milliseconds to spend processing
-func _init(iterator, callable: FuncRef, timeout := 0):
+func _init(iterator, instance, funcname: String, timeout := 0):
     self.iterator = iterator
-    self.callable = callable
+    self.callable = Callable.new(instance, funcname)
     self.timeout = timeout
 
 # call_func()
@@ -24,7 +27,7 @@ func call_func():
     var end_time := OS.get_system_time_msecs() + timeout
     var final_result = null
     for item in iterator:
-        var result = callable.call_func(item)
+        var result = callable.call_func([item])
         while result is GDScriptFunctionState:
             result = result.resume()
             if OS.get_system_time_msecs() >= end_time:

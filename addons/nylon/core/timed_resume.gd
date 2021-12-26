@@ -4,14 +4,17 @@
 class_name TimedResume
 extends Reference
 
-var callable : FuncRef
+const Callable := preload("callable.gd")
+
+var callable : Callable
 var timeout := 0
 
-# TimedResume.new(callable: FuncRef, timeout : int)
-# callable (FuncRef): The function to call
+# TimedResume.new(instance: Object, funcname: String, timeout : int)
+# instance (Object): object to call a function
+# funcname (String): name of the function to call
 # timeout (int): Time in milliseconds to wait after yielding
-func _init(callable: FuncRef, timeout := 0):
-    self.callable = callable
+func _init(instance, funcname: String, timeout := 0):
+    self.callable = Callable.new(instance, funcname)
     self.timeout = timeout
 
 # call_func():

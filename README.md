@@ -121,6 +121,10 @@ var timed_iter := TimedIter.new(get_children(), funcref(self, "update_node"), 2)
 Worker.run_async(funcref(timed_iter, "call_func"))
 ```
 
+### Callable
+
+There is a custom implementation of `FuncRef` named `Callable`. The main benefit of this is that it will increment the refrence counter for instances passed in.
+
 ### Cancelling
 
 You may want to cancel existing coroutines for reasons such as:
