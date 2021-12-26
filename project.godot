@@ -15,6 +15,11 @@ _global_script_classes=[ {
 "path": "res://addons/nylon/core/batch_iter.gd"
 }, {
 "base": "Reference",
+"class": "Coroutine",
+"language": "GDScript",
+"path": "res://addons/nylon/core/coroutine.gd"
+}, {
+"base": "Reference",
 "class": "TimedCallable",
 "language": "GDScript",
 "path": "res://addons/nylon/core/timed_callable.gd"
@@ -36,6 +41,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "BatchIter": "",
+"Coroutine": "",
 "TimedCallable": "",
 "TimedIter": "",
 "TimedResume": "",

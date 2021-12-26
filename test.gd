@@ -40,25 +40,25 @@ var finished_work := false
 func _ready() -> void:
     var test := Test.new()
 
-    var count_job := Worker.run_async(funcref(test, "count_to_10"))
+    var count_job := Worker.run_async(test, "count_to_10")
     yield(count_job, "started")
     assert(yield(count_job, "ended") == 10)
     assert(yield(count_job, "completed") == 10)
 
-    var repeat_job := Worker.run_async(funcref(test, "repeat_10_times"), true)
+    var repeat_job := Worker.run_async(test, "repeat_10_times", true)
     for _i in range(11):
         yield(repeat_job, "started")
         yield(repeat_job, "ended")
     yield(repeat_job, "completed")
 
     var loader := InteractiveLoader.new(["addons/nylon/icon.png"])
-    var load_job := Worker.run_async(funcref(loader, "load_interactive"))
+    var load_job := Worker.run_async(loader, "load_interactive")
     var res = yield(load_job, "completed")
     print(res)
 
     var weak := WeakTest.new()
     var weak_callable := WeakCallable.new(weakref(weak), "echo")
-    var weak_job := Worker.run_async(funcref(weak_callable, "call_func"), true)
+    var weak_job := Worker.run_async(weak_callable, "call_func", true)
     yield(get_tree().create_timer(.1), "timeout")
     var count := weak.count
     weak = null
@@ -66,38 +66,44 @@ func _ready() -> void:
     assert(count > 0)
 
     var sum := Sum.new()
-    var batch_iter := BatchIter.new([1, 1, 2, 3, 5], funcref(sum, "increment"), 2)
-    var batch_job := Worker.run_async(funcref(batch_iter, "call_func"))
+    var batch_iter := BatchIter.new([1, 1, 2, 3, 5], sum, "increment", 2)
+    var batch_job := Worker.run_async(batch_iter, "call_func")
     assert(yield(batch_job, "completed") == 12.0)
     assert(sum.count == 12)
 
-    var cancel_job := Worker.run_async(funcref(batch_iter, "call_func"))
+    var cancel_job := Worker.run_async(batch_iter, "call_func")
     yield(cancel_job, "started")
     yield(get_tree(), "idle_frame") # Cannot cancel while handling `started` signal
     cancel_job.cancel(false) # emits `ended`
     assert(yield(cancel_job, "completed") == null) # no result since it was cancelled
     assert(sum.count == 14)
 
-    var cancel_job_wait := Worker.run_async(funcref(batch_iter, "call_func"))
+    var cancel_job_wait := Worker.run_async(batch_iter, "call_func")
     yield(cancel_job_wait, "started")
     yield(get_tree(), "idle_frame") # Cannot cancel while handling `started` signal
     cancel_job_wait.cancel(true)
     assert(yield(cancel_job_wait, "ended") == 26.0) # `completed` won't be called
     assert(sum.count == 26)
 
-    var timed_iter := TimedIter.new([1, 1, 2, 3, 5], funcref(sum, "increment"), 0.01)
-    var timed_iter_job := Worker.run_async(funcref(timed_iter, "call_func"))
+    var timed_iter := TimedIter.new([1, 1, 2, 3, 5], sum, "increment", 0.01)
+    var timed_iter_job := Worker.run_async(timed_iter, "call_func")
     assert(yield(timed_iter_job, "completed") == 38.0)
     assert(sum.count == 38)
 
     print("waiting...")
-    var timed_start := TimedResume.new(funcref(self, "print_wait"), 5)
-    var timed_resume := TimedCallable.new(funcref(timed_start, "call_func"), 50)
-    var timed_job = Worker.run_async(funcref(timed_resume, "call_func"))
+    var timed_start := TimedResume.new(self, "print_wait", 5)
+    var timed_resume := TimedCallable.new(timed_start, "call_func", 50)
+    var timed_job = Worker.run_async(timed_resume, "call_func")
     assert(yield(timed_job, "completed") == "result")
 
     finished_work = true
     print("Finished")
+
+    var unfinished_job := Worker.run_async(Test.new(), "count_to_10") # Test should live on
+    get_tree().connect("idle_frame", self, "wait_for_job", [unfinished_job])
+
+func wait_for_job(unfinished_job: Coroutine):
+    assert(yield(unfinished_job, "completed") == 10)
 
 func print_wait():
     print("waited")

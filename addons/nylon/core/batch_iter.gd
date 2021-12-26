@@ -4,17 +4,20 @@
 class_name BatchIter
 extends Reference
 
+const Callable := preload("callable.gd")
+
 var iterator
-var callable: FuncRef
+var callable: Callable
 var batch_size := 9223372036854775807
 
-# BatchIter.new(iterator: Iterator, callable: FuncRef, batch_size : int)
+# BatchIter.new(iterator: Iterator, instance: Object, funcname: String, batch_size : int)
 # iterator (Iterator): The iterator to call functions on
-# callable (FuncRef): The method to call
+# instance (Object): object to call a function
+# funcname (String): name of the function to call
 # batch_size (int): The max number of items to process per call
-func _init(iterator, callable: FuncRef, batch_size := 9223372036854775807):
+func _init(iterator, instance, funcname: String, batch_size := 9223372036854775807):
     self.iterator = iterator
-    self.callable = callable
+    self.callable = Callable.new(instance, funcname)
     self.batch_size = batch_size
 
 # call_func()
@@ -26,7 +29,7 @@ func call_func():
     var count := 0
     var final_result = null
     for item in iterator:
-        var result = callable.call_func(item)
+        var result = callable.call_func([item])
         while result is GDScriptFunctionState:
             result = result.resume()
             count += 1
