@@ -56,7 +56,7 @@ Coroutines emit the following signals:
 * `completed` when `retry` reaches `0` or the coroutine is cancelled
   * It yields the final result of the coroutine
 
-See `test.gd` for more examples. When run you will see the `_process()` function gets called while Nylon is performing other operations.
+See [test.gd](https://github.com/mashumafi/nylon/blob/main/test.gd) for more examples. When run you will see the `_process()` function gets called while Nylon is performing other operations.
 
 You can build complex hierarchy of coroutines, here are a few that come with Nylon:
 
@@ -126,7 +126,7 @@ You may want to cancel existing coroutines for reasons such as:
 * The result is no longer needed
 
 Nylon will stop processing a coroutine if at any point it returns exactly `true`.
-Another option is to use the `cancel` method on `Coroutine` which is returned by `Worker.run_async(coroutine, retry)`.
+Another option is to use the `cancel` method on `Coroutine` which is returned by `Worker.run_async(instance, funcname, retry)`.
 `cancel` can be used to stop processing entirely or to allow processing to finish resuming a function to it's final result.
 
 ```gdscript
