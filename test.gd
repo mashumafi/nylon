@@ -98,8 +98,7 @@ func _ready() -> void:
     assert(yield(timed_job, "completed") == "result")
 
     print("waiting for silk...")
-    var silk_timed_job = Silk.new() \
-        .weak_callable(weakref(self), "print_wait") \
+    var silk_timed_job = Silk.new(self, "print_wait") \
         .timed_resume(5) \
         .timed_callable(50) \
         .submit(Worker)

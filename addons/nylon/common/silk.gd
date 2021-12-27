@@ -10,15 +10,12 @@ const FUNCNAME := "funcname"
 
 var _builder := {}
 
-func callable(instance, funcname: String) -> Silk:
-    _builder[INSTANCE] = instance
-    _builder[FUNCNAME] = funcname
-    return self
+func _init(instance, funcname: String):
+    if not instance is WeakRef:
+        instance = weakref(instance)
 
-func weak_callable(instance: WeakRef, funcname: String) -> Silk:
     _builder[INSTANCE] = WeakCallable.new(instance, funcname)
     _builder[FUNCNAME] = "call_func"
-    return self
 
 func batch_iter(iter) -> Silk:
     _builder[INSTANCE] = BatchIter.new(_builder[INSTANCE], _builder[FUNCNAME], iter)

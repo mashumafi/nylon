@@ -151,11 +151,15 @@ Worker.run_async(timed_start, "call_func", 1)
 into the following:
 
 ```gdscript
-Silk.new() \
-  .weak_callable(weakref(self), "print_wait") \ # the base function
+Silk.new(self, "print_wait") \ # the base function
   .timed_resume(5) \ # wait 5 milliseconds after each yield
   .timed_callable(50) \ # wait 50 milliseconds before each retry
   .submit(Worker, 1) # tell worker to run the job once async
 ```
 
-Not order is important when constructing Nylon tasks.
+Always remember that jobs are evaluated from bottom to top. In the above example it would be:
+1. `timed_callable`
+2. `timed_resume`
+3. `print_wait`
+
+Silk will always convert the instance passed into it's constructor into a `WeakRef`/`WeakCallable` which will automatically destroy the job if the object ever gets freed.
