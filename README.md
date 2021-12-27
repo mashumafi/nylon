@@ -145,7 +145,7 @@ It can transform a redundant expression like:
 var timed_weak := WeakCallable.new(weakref(self), "print_wait")
 var timed_resume := TimedResume.new(timed_weak, "call_func", 5)
 var timed_start := TimedCallable.new(timed_resume, "call_func", 50)
-Worker.run_async(timed_start, "call_func")
+Worker.run_async(timed_start, "call_func", 1)
 ```
 
 into the following:
@@ -155,7 +155,7 @@ Silk.new() \
   .weak_callable(weakref(self), "print_wait") \ # the base function
   .timed_resume(5) \ # wait 5 milliseconds after each yield
   .timed_callable(50) \ # wait 50 milliseconds before each retry
-  .submit(Worker) # tell worker to run the job once async
+  .submit(Worker, 1) # tell worker to run the job once async
 ```
 
 Not order is important when constructing Nylon tasks.
