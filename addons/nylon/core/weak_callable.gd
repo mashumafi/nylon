@@ -4,21 +4,21 @@
 class_name WeakCallable
 extends Reference
 
-var object : WeakRef
-var func_name : String
+var instance : WeakRef
+var funcname : String
 
-# WeakCallable.new(object: WeakRef, func_name: String)
-# object (WeakRef): The object to call the method of
-# func_name (String): The method name to call
-func _init(object: WeakRef, func_name: String):
-    self.object = object
-    self.func_name = func_name
+# WeakCallable.new(instance: WeakRef, funcname: String)
+# instance (WeakRef): The object to call the method of
+# funcname (String): The method name to call
+func _init(instance: WeakRef, funcname: String):
+    self.instance = instance
+    self.funcname = funcname
 
 # call_func()
-# Calls the function if the object is valid
+# Calls the function if the instance is valid
 func call_func():
-    var ref = object.get_ref()
+    var ref = instance.get_ref()
     if ref:
-        return ref.call(func_name)
+        return ref.call(funcname)
 
     return true # Cancel infinite replay

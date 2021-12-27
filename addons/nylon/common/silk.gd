@@ -5,38 +5,47 @@ class_name Silk
 extends Reference
 
 const NylonWorker := preload("../core/worker.gd")
-const INSTANCE := "instance"
-const FUNCNAME := "funcname"
 
-var _builder := {}
+var instance
+var funcname : String
 
+# Silk.new(instance: Object, funcname: String)
+# instance (Object): The object to call the method of
+# func_name (String): The method name to call
 func _init(instance, funcname: String):
     if instance is WeakRef:
-        _builder[INSTANCE] = WeakCallable.new(instance, funcname)
-        _builder[FUNCNAME] = "call_func"
+        self.instance = WeakCallable.new(instance, funcname)
+        self.funcname = "call_func"
     else:
-        _builder[INSTANCE] = instance
-        _builder[FUNCNAME] = funcname
+        self.instance = instance
+        self.funcname = funcname
 
-func batch_iter(iter) -> Silk:
-    _builder[INSTANCE] = BatchIter.new(_builder[INSTANCE], _builder[FUNCNAME], iter)
-    _builder[FUNCNAME] = "call_func"
+# batch_iter(iter, batch_size : int) -> Silk
+func batch_iter(iter, batch_size := 9223372036854775807) -> Silk:
+    self.instance = BatchIter.new(self.instance, self.funcname, iter, batch_size)
+    self.funcname = "call_func"
     return self
 
+# timed_callable(timeout : int) -> Silk
 func timed_callable(timeout: int) -> Silk:
-    _builder[INSTANCE] = TimedCallable.new(_builder[INSTANCE], _builder[FUNCNAME], timeout)
-    _builder[FUNCNAME] = "call_func"
+    self.instance = TimedCallable.new(self.instance, self.funcname, timeout)
+    self.funcname = "call_func"
     return self
 
+# timed_iter(timeout : int) -> Silk
 func timed_iter(iter, timeout: int) -> Silk:
-    _builder[INSTANCE] = TimedIter.new(_builder[INSTANCE], _builder[FUNCNAME], iter, timeout)
-    _builder[FUNCNAME] = "call_func"
+    self.instance = TimedIter.new(self.instance, self.funcname, iter, timeout)
+    self.funcname = "call_func"
     return self
 
+# batch_iter(iter, timeout : int) -> Silk
 func timed_resume(timeout: int) -> Silk:
-    _builder[INSTANCE] = TimedResume.new(_builder[INSTANCE], _builder[FUNCNAME], timeout)
-    _builder[FUNCNAME] = "call_func"
+    self.instance = TimedResume.new(self.instance, self.funcname, timeout)
+    self.funcname = "call_func"
     return self
 
+# submit(worker: NylonWorker, replay: int | bool) -> Coroutine
+# replay (int | bool): How many times to call the function
+#                      Using `true` repeats until cancelled
 func submit(worker: NylonWorker, retry = 1) -> Coroutine:
-    return worker.run_async(_builder[INSTANCE], _builder[FUNCNAME], retry)
+    return worker.run_async(self.instance, self.funcname, retry)
