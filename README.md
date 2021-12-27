@@ -135,7 +135,27 @@ job.cancel(true) # Allow job to finish resuming, emits `ended` once finished but
 job.cancel(false) # Immediately terminates a job, emits `ended` once called and `completed` emits on the next frame
 ```
 
-## Future
+## Silk
 
-The goal is to extend Nylon to support flexible and easy to build coroutines with it's core.
-It would also make sense to add some common generic features such as a resource loaders.
+The `Silk` class simplifies complex Nylon tasks using the builder pattern.
+
+It can transform a redundant expression like:
+
+```gdscript
+var timed_weak := WeakCallable.new(weakref(self), "print_wait")
+var timed_resume := TimedResume.new(timed_weak, "call_func", 5)
+var timed_start := TimedCallable.new(timed_resume, "call_func", 50)
+Worker.run_async(timed_start, "call_func")
+```
+
+into the following:
+
+```gdscript
+Silk.new() \
+  .weak_callable(weakref(self), "print_wait") \ # the base function
+  .timed_resume(5) \ # wait 5 milliseconds after each yield
+  .timed_callable(50) \ # wait 50 milliseconds before each retry
+  .submit(Worker) # tell worker to run the job once async
+```
+
+Not order is important when constructing Nylon tasks.
