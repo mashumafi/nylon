@@ -162,4 +162,4 @@ Always remember that jobs are evaluated from bottom to top. In the above example
 2. `timed_resume`
 3. `print_wait`
 
-Passing a `WeakRef` into the contructor or `Silk` will create a `WeakCallable` and will automatically destroy the Nylon job when the instance is freed. Every other instance type will be handled normally.
+Passing a `WeakRef` into the contructor of `Silk` will create a `WeakCallable` and will automatically destroy the Nylon job when the instance is freed. Every other instance type will be handled normally meaning Nylon will contribute to the use count of `Reference` and you must manually cancel jobs using an `Object` before freeing them.
