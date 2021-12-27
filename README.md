@@ -151,7 +151,7 @@ Worker.run_async(timed_start, "call_func", 1)
 into the following:
 
 ```gdscript
-Silk.new(self, "print_wait") \ # the base function
+Silk.new(weakref(self), "print_wait") \ # the base function
   .timed_resume(5) \ # wait 5 milliseconds after each yield
   .timed_callable(50) \ # wait 50 milliseconds before each retry
   .submit(Worker, 1) # tell worker to run the job once async
@@ -162,4 +162,4 @@ Always remember that jobs are evaluated from bottom to top. In the above example
 2. `timed_resume`
 3. `print_wait`
 
-Silk will always convert the instance passed into it's constructor into a `WeakRef`/`WeakCallable` which will automatically destroy the job if the object ever gets freed.
+Passing a `WeakRef` into the contructor or `Silk` will create a `WeakCallable` and will automatically destroy the Nylon job when the instance is freed. Every other instance type will be handled normally.
