@@ -46,6 +46,7 @@ Now Nylon will now update 1 node over the next hundred frames which could improv
 The main entry point for Nylon is the function `Worker.run_async(instance, funcname, retry)`.
 It is recommended to add `Worker` as a autoload singleton depending on your workflow.
 It takes only the instace/funcname and how many times to run that function.
+See [Silk](#Silk) which uses the builder pattern to create complex jobs.
 
 You can run a function forever by supplying `true` for `retry`. It will run until cancelled which occurs when the coroutine returns `true`.
 
