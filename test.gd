@@ -91,10 +91,18 @@ func _ready() -> void:
     assert(sum.count == 38)
 
     print("waiting...")
-    var timed_start := TimedResume.new(self, "print_wait", 5)
-    var timed_resume := TimedCallable.new(timed_start, "call_func", 50)
-    var timed_job = Worker.run_async(timed_resume, "call_func")
+    var timed_weak := WeakCallable.new(weakref(self), "print_wait")
+    var timed_resume := TimedResume.new(timed_weak, "call_func", 5)
+    var timed_start := TimedCallable.new(timed_resume, "call_func", 50)
+    var timed_job = Worker.run_async(timed_start, "call_func")
     assert(yield(timed_job, "completed") == "result")
+
+    print("waiting for silk...")
+    var silk_timed_job = Silk.new(self, "print_wait") \
+        .timed_resume(5) \
+        .timed_callable(50) \
+        .submit(Worker)
+    assert(yield(silk_timed_job, "completed") == "result")
 
     finished_work = true
     print("Finished")

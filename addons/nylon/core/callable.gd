@@ -1,3 +1,5 @@
+# Callable
+# Custom FuncRef implementation that incremements reference count for `instance`
 
 var instance
 var funcname : String

@@ -46,6 +46,7 @@ Now Nylon will now update 1 node over the next hundred frames which could improv
 The main entry point for Nylon is the function `Worker.run_async(instance, funcname, retry)`.
 It is recommended to add `Worker` as a autoload singleton depending on your workflow.
 It takes only the instace/funcname and how many times to run that function.
+See [Silk](#Silk) which uses the builder pattern to create complex jobs.
 
 You can run a function forever by supplying `true` for `retry`. It will run until cancelled which occurs when the coroutine returns `true`.
 
@@ -135,7 +136,31 @@ job.cancel(true) # Allow job to finish resuming, emits `ended` once finished but
 job.cancel(false) # Immediately terminates a job, emits `ended` once called and `completed` emits on the next frame
 ```
 
-## Future
+## Silk
 
-The goal is to extend Nylon to support flexible and easy to build coroutines with it's core.
-It would also make sense to add some common generic features such as a resource loaders.
+The `Silk` class simplifies complex Nylon tasks using the builder pattern.
+
+It can transform a redundant expression like:
+
+```gdscript
+var timed_weak := WeakCallable.new(weakref(self), "print_wait")
+var timed_resume := TimedResume.new(timed_weak, "call_func", 5)
+var timed_start := TimedCallable.new(timed_resume, "call_func", 50)
+Worker.run_async(timed_start, "call_func", 1)
+```
+
+into the following:
+
+```gdscript
+Silk.new(weakref(self), "print_wait") \ # the base function
+  .timed_resume(5) \ # wait 5 milliseconds after each yield
+  .timed_callable(50) \ # wait 50 milliseconds before each retry
+  .submit(Worker, 1) # tell worker to run the job once async
+```
+
+Always remember that jobs are evaluated from bottom to top. In the above example it would be:
+1. `timed_callable`
+2. `timed_resume`
+3. `print_wait`
+
+Passing a `WeakRef` into the contructor of `Silk` will create a `WeakCallable` and will automatically destroy the Nylon job when the instance is freed. Every other instance type will be handled normally meaning Nylon will contribute to the use count of `Reference` and you must manually cancel jobs using an `Object` before freeing them.
