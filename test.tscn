@@ -9,6 +9,5 @@ script = ExtResource( 1 )
 [node name="Cacoon" type="Node" parent="."]
 script = ExtResource( 2 )
 instance = NodePath("..")
-funcname = "cacoon_worker"
-timed_delay = 80
+func_name = "cacoon_worker"
 resume_delay = 10

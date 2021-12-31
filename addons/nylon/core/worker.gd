@@ -5,7 +5,7 @@ const Coroutine := preload("coroutine.gd")
 # List of coroutines
 var _coroutines := []
 
-# run_async(callable: Callable, replay: int | bool) -> Coroutine
+# run_async(instance: Object, funcname: String, replay: int | bool) -> Coroutine
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
 # replay (int | bool): How many times to call the function
