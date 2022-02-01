@@ -20,14 +20,19 @@ _global_script_classes=[ {
 "path": "res://addons/nylon/core/coroutine.gd"
 }, {
 "base": "Reference",
+"class": "DelayedCallable",
+"language": "GDScript",
+"path": "res://addons/nylon/core/delayed_callable.gd"
+}, {
+"base": "Reference",
+"class": "DelayedResume",
+"language": "GDScript",
+"path": "res://addons/nylon/core/delayed_resume.gd"
+}, {
+"base": "Reference",
 "class": "Silk",
 "language": "GDScript",
 "path": "res://addons/nylon/common/silk.gd"
-}, {
-"base": "Reference",
-"class": "TimedCallable",
-"language": "GDScript",
-"path": "res://addons/nylon/core/timed_callable.gd"
 }, {
 "base": "Reference",
 "class": "TimedIter",
@@ -47,8 +52,9 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "BatchIter": "",
 "Coroutine": "",
+"DelayedCallable": "",
+"DelayedResume": "",
 "Silk": "",
-"TimedCallable": "",
 "TimedIter": "",
 "TimedResume": "",
 "WeakCallable": ""

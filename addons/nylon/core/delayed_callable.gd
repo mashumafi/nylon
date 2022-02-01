@@ -1,8 +1,8 @@
-# TimedCallable
+# DelayedCallable
 # Adds a delay before calling a coroutine
 # Similar to get_tree().create_timer(timeout)
 
-class_name TimedCallable
+class_name DelayedCallable
 extends Reference
 
 const Callable := preload("callable.gd")
@@ -10,7 +10,7 @@ const Callable := preload("callable.gd")
 var callable : Callable
 var timeout := 0
 
-# TimedCallable.new(instance: Object, funcname: String, timeout : int)
+# DelayedCallable.new(instance: Object, funcname: String, delay : int)
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
 # timeout (int): Time in milliseconds to wait before calling the function

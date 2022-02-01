@@ -27,8 +27,8 @@ func batch_iter(iter, batch_size := 9223372036854775807) -> Silk:
     return self
 
 # timed_callable(timeout : int) -> Silk
-func timed_callable(timeout: int) -> Silk:
-    self.instance = TimedCallable.new(self.instance, self.funcname, timeout)
+func delayed_callable(timeout: int) -> Silk:
+    self.instance = DelayedCallable.new(self.instance, self.funcname, timeout)
     self.funcname = "call_func"
     return self
 
@@ -41,6 +41,12 @@ func timed_iter(iter, timeout: int) -> Silk:
 # batch_iter(iter, timeout : int) -> Silk
 func timed_resume(timeout: int) -> Silk:
     self.instance = TimedResume.new(self.instance, self.funcname, timeout)
+    self.funcname = "call_func"
+    return self
+
+# batch_iter(iter, timeout : int) -> Silk
+func delayed_resume(timeout: int) -> Silk:
+    self.instance = DelayedResume.new(self.instance, self.funcname, timeout)
     self.funcname = "call_func"
     return self
 
