@@ -104,11 +104,23 @@ func _ready() -> void:
         .submit(Worker)
     assert(yield(silk_timed_job, "completed") == "result")
 
+    print("Should only print once")
+    var timed_new := Silk.new(self, "sleep_ms") \
+        .timed_resume(15) \
+        .submit(Worker)
+    yield(timed_new, "completed")
+    print("Should printed once")
+
     finished_work = true
     print("Finished")
 
     var unfinished_job := Worker.run_async(Test.new(), "count_to_10") # Test should live on
     get_tree().connect("idle_frame", self, "wait_for_job", [unfinished_job])
+
+func sleep_ms():
+    for i in range(10):
+        OS.delay_usec(5)
+        yield()
 
 func wait_for_job(unfinished_job: Coroutine):
     assert(yield(unfinished_job, "completed") == 10)
