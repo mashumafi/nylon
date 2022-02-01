@@ -25,7 +25,6 @@ func call_func():
     while state is GDScriptFunctionState:
         if OS.get_system_time_msecs() - time >= self.timeout:
             yield()
-            print("yielded")
             time = OS.get_system_time_msecs()
         state = state.resume()
     return state
