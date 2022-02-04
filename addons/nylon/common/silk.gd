@@ -53,5 +53,8 @@ func timed_resume(timeout: int) -> Silk:
 # submit(worker: NylonWorker, replay: int | bool) -> Coroutine
 # replay (int | bool): How many times to call the function
 #                      Using `true` repeats until cancelled
-func submit(worker: NylonWorker, retry = 1) -> Coroutine:
-    return worker.run_async(self.instance, self.funcname, retry)
+func submit(worker: Nylon, retry = 1) -> Coroutine:
+    return worker.callv("run_async", build(retry))
+
+func build(retry = 1) -> Array:
+    return [self.instance, self.funcname, retry]

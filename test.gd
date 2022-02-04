@@ -85,7 +85,7 @@ func _ready() -> void:
     assert(yield(cancel_job_wait, "ended") == 26.0) # `completed` won't be called
     assert(sum.count == 26)
 
-    var timed_iter := TimedIter.new([1, 1, 2, 3, 5], sum, "increment", 0.01)
+    var timed_iter := TimedIter.new([1, 1, 2, 3, 5], sum, "increment", 1)
     var timed_iter_job := Worker.run_async(timed_iter, "call_func")
     assert(yield(timed_iter_job, "completed") == 38.0)
     assert(sum.count == 38)
@@ -115,7 +115,7 @@ func _ready() -> void:
     print("Finished")
 
     var unfinished_job := Worker.run_async(Test.new(), "count_to_10") # Test should live on
-    get_tree().connect("idle_frame", self, "wait_for_job", [unfinished_job])
+    assert(get_tree().connect("idle_frame", self, "wait_for_job", [unfinished_job]) == OK)
 
 func sleep_ms():
     for i in range(5):
@@ -133,6 +133,9 @@ func print_wait():
         print(k)
 
     return "result"
+
+func cacoon_worker():
+    print("Butterfly")
 
 func _process(_delta: float):
     if not finished_work:

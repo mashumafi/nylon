@@ -14,10 +14,20 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/nylon/core/batch_iter.gd"
 }, {
+"base": "Nylon",
+"class": "Cacoon",
+"language": "GDScript",
+"path": "res://addons/nylon/common/cacoon.gd"
+}, {
 "base": "Reference",
 "class": "Coroutine",
 "language": "GDScript",
 "path": "res://addons/nylon/core/coroutine.gd"
+}, {
+"base": "Node",
+"class": "Nylon",
+"language": "GDScript",
+"path": "res://addons/nylon/core/nylon.gd"
 }, {
 "base": "Reference",
 "class": "DelayedCallable",
@@ -51,9 +61,11 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "BatchIter": "",
+"Cacoon": "",
 "Coroutine": "",
 "DelayedCallable": "",
 "DelayedResume": "",
+"Nylon": "",
 "Silk": "",
 "TimedIter": "",
 "TimedResume": "",
