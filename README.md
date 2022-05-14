@@ -63,8 +63,7 @@ You can build complex hierarchy of coroutines, here are a few that come with Nyl
 
 ### DelayedCallable
 
-Adds a delay before calling the coroutine. This delay occurs before each retry.
-This works similar to `get_tree().create_timer(timeout)` or the `Timer` class.
+Adds a delay after calling the coroutine. This delay occurs before each retry.
 
 ```gdscript
 # Update all nodes forever with a 500 millisecond delay between each update
@@ -128,7 +127,7 @@ Worker.run_async(timed_iter, "call_func")
 
 ### Callable
 
-The custom implementation of `FuncRef`. The main benefit of `Callable` is it will increment the refrence counter for instances passed in.
+A custom implementation of `FuncRef`. The main benefit of `Callable` is it will increment the refrence counter for instances passed in.
 
 ### Cancelling
 
