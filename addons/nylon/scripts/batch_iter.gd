@@ -8,14 +8,14 @@ const Callable := preload("callable.gd")
 
 var iterator
 var callable: Callable
-var batch_size := 9223372036854775807
+var batch_size: int
 
 # BatchIter.new(iterator: Iterator, instance: Object, funcname: String, batch_size : int)
 # iterator (Iterator): The iterator to call functions on
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
 # batch_size (int): The max number of items to process per call
-func _init(iterator, instance, funcname: String, batch_size := 9223372036854775807):
+func _init(iterator, instance, funcname: String, batch_size: int):
     self.iterator = iterator
     self.callable = Callable.new(instance, funcname)
     self.batch_size = batch_size

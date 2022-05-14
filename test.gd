@@ -1,7 +1,5 @@
 extends Node
 
-var InteractiveLoader := preload("res://addons/nylon/common/interactive_loader.gd")
-
 class Test:
     func count_to_10():
         for i in range(10):
@@ -25,6 +23,9 @@ class Sum:
     func increment(num: int):
         count += num
         return float(count)
+
+func print_waiting_500():
+    print("Waiting 500 ms")
 
 class WeakTest:
     extends Reference
@@ -51,9 +52,10 @@ func _ready() -> void:
         yield(repeat_job, "ended")
     yield(repeat_job, "completed")
 
-    var loader := InteractiveLoader.new(["addons/nylon/icon.png"])
-    var load_job := Worker.run_async(loader, "load_interactive")
+    var loader := AsyncResourceLoader.new("addons/nylon/icon.png")
+    var load_job := Worker.run_async(loader, "call_func")
     var res = yield(load_job, "completed")
+    assert(res is Texture)
     print(res)
 
     var weak := WeakTest.new()
@@ -104,12 +106,19 @@ func _ready() -> void:
         .submit(Worker)
     assert(yield(silk_timed_job, "completed") == "result")
 
-    print("Should not print {")
+    print("Prints twice {")
     var timed_new := Silk.new(self, "sleep_ms") \
         .timed_resume(15) \
         .submit(Worker)
     yield(timed_new, "completed")
-    print("} Should not print")
+    print("} Prints twice")
+
+    print("Starting..")
+    var delayed_callable := Silk.new(self, "print_waiting_500") \
+        .delayed_callable(500) \
+        .submit(Worker, 3)
+    yield(delayed_callable, "completed")
+    print("..Done")
 
     finished_work = true
     print("Finished")

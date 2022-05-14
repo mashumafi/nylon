@@ -8,14 +8,14 @@ const Callable := preload("callable.gd")
 
 var iterator
 var callable: Callable
-var timeout := 0
+var timeout: int
 
 # TimedIter.new(iterator: Iterator, instance: Object, funcname: String, timeout : int)
 # iterator (Iterator): The iterator to call functions on
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
 # timeout (int): Time in milliseconds to spend processing
-func _init(iterator, instance, funcname: String, timeout := 0):
+func _init(iterator, instance, funcname: String, timeout: int):
     self.iterator = iterator
     self.callable = Callable.new(instance, funcname)
     self.timeout = timeout

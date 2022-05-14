@@ -10,56 +10,62 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Reference",
+"class": "AsyncResourceLoader",
+"language": "GDScript",
+"path": "res://addons/nylon/scripts/async_resource_loader.gd"
+}, {
+"base": "Reference",
 "class": "BatchIter",
 "language": "GDScript",
-"path": "res://addons/nylon/core/batch_iter.gd"
+"path": "res://addons/nylon/scripts/batch_iter.gd"
 }, {
 "base": "Nylon",
 "class": "Cacoon",
 "language": "GDScript",
-"path": "res://addons/nylon/common/cacoon.gd"
+"path": "res://addons/nylon/scripts/cacoon.gd"
 }, {
 "base": "Reference",
 "class": "Coroutine",
 "language": "GDScript",
-"path": "res://addons/nylon/core/coroutine.gd"
-}, {
-"base": "Node",
-"class": "Nylon",
-"language": "GDScript",
-"path": "res://addons/nylon/core/nylon.gd"
+"path": "res://addons/nylon/scripts/coroutine.gd"
 }, {
 "base": "Reference",
 "class": "DelayedCallable",
 "language": "GDScript",
-"path": "res://addons/nylon/core/delayed_callable.gd"
+"path": "res://addons/nylon/scripts/delayed_callable.gd"
 }, {
 "base": "Reference",
 "class": "DelayedResume",
 "language": "GDScript",
-"path": "res://addons/nylon/core/delayed_resume.gd"
+"path": "res://addons/nylon/scripts/delayed_resume.gd"
+}, {
+"base": "Node",
+"class": "Nylon",
+"language": "GDScript",
+"path": "res://addons/nylon/scripts/nylon.gd"
 }, {
 "base": "Reference",
 "class": "Silk",
 "language": "GDScript",
-"path": "res://addons/nylon/common/silk.gd"
+"path": "res://addons/nylon/scripts/silk.gd"
 }, {
 "base": "Reference",
 "class": "TimedIter",
 "language": "GDScript",
-"path": "res://addons/nylon/core/timed_iter.gd"
+"path": "res://addons/nylon/scripts/timed_iter.gd"
 }, {
 "base": "Reference",
 "class": "TimedResume",
 "language": "GDScript",
-"path": "res://addons/nylon/core/timed_resume.gd"
+"path": "res://addons/nylon/scripts/timed_resume.gd"
 }, {
 "base": "Reference",
 "class": "WeakCallable",
 "language": "GDScript",
-"path": "res://addons/nylon/core/weak_callable.gd"
+"path": "res://addons/nylon/scripts/weak_callable.gd"
 } ]
 _global_script_class_icons={
+"AsyncResourceLoader": "",
 "BatchIter": "",
 "Cacoon": "",
 "Coroutine": "",
@@ -74,13 +80,13 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Worker"
+config/name="Nylon"
 run/main_scene="res://test.tscn"
 config/icon="res://addons/nylon/icon.png"
 
 [autoload]
 
-Worker="*res://addons/nylon/core/worker.gd"
+Worker="*res://addons/nylon/scripts/worker.gd"
 
 [editor_plugins]
 
