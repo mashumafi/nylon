@@ -48,38 +48,47 @@ It is recommended to add `Worker` as a autoload singleton depending on your work
 It takes only the instace/funcname and how many times to run that function.
 See [Silk](#Silk) which uses the builder pattern to create complex jobs.
 
-You can run a function forever by supplying `true` for `retry`. It will run until cancelled which occurs when the coroutine returns `true`.
+You can run a function forever by supplying `true` for `retry`. It will run until cancelled which occurs when the coroutine `return true`.
 
 Coroutines emit the following signals:
 * `started` when a function is first called at the beginning of each `retry`
 * `ended` when a function does not `yield`
-  * It returns the current result of the coroutine
+  * It returns the latest result of the coroutine
 * `completed` when `retry` reaches `0` or the coroutine is cancelled
-  * It yields the final result of the coroutine
+  * It yields the latest or final result of the coroutine depending if it was cancelled
 
 See [test.gd](https://github.com/mashumafi/nylon/blob/main/test.gd) for more examples. When run you will see the `_process()` function gets called while Nylon is performing other operations.
 
 You can build complex hierarchy of coroutines, here are a few that come with Nylon:
 
-### TimedCallable
+### DelayedCallable
 
-Adds a delay before calling the coroutine. This delay occurs before each retry.
-This works similar to `get_tree().create_timer(timeout)` or the `Timer` class.
+Adds a delay after calling the coroutine. This delay occurs before each retry.
 
 ```gdscript
-# Update 1 node per frame after a 500 millisecond delay
-var timed_callable := TimedCallable.new(self, "update_nodes", 500)
-Worker.run_async(timed_callable, "call_func")
+# Update all nodes forever with a 500 millisecond delay between each update
+var delayed_callable := DelayedCallable.new(self, "update_nodes", 500)
+Worker.run_async(delayed_callable, "call_func", true) # true to repeat forever
 ```
 
-### TimedResume
+### DelayedResume
 
 Adds a delay after each `yield`. This allows workers to take breaks between chunks.
 
 ```gdscript
 # Update 1 node every 50 milliseconds
-var timed_resume := TimedResume.new(self, "update_nodes", 50)
-Worker.run_async(timed_resume, "call_func")
+var delayed_resume := TimedResume.new(self, "update_nodes", 50)
+Worker.run_async(delayed_resume, "call_func")
+```
+
+### TimedResume
+
+Processes a coroutine and `yield` control after  `timeout`.
+
+```gdscript
+# Update nodes for 3 milliseconds of each frame.
+var timed_resume := TimedResume.new(self, "update_nodes", 3)
+Worker.run_async(delayed_retimed_resumesume, "call_func")
 ```
 
 ### WeakCallable
@@ -98,7 +107,7 @@ The Iter classes take an iterator and performs small amounts of work at a time. 
 
 #### BatchIter
 
-Call the provided function on each item in `iterator` in chunks based on `batch_size`
+Call the provided function on each item in `iterator` in chunks based on `batch_size`.
 
 ```gdscript
 # Update 2 nodes per frame
@@ -108,17 +117,17 @@ Worker.run_async(batch_iter, "call_func")
 
 #### TimedIter
 
-Call the provided function on each item in `iterator` in chunks based on `timeout`
+Call the provided function on each item in `iterator` in chunks based on `timeout`.
 
 ```gdscript
-# Update nodes until 2 milliseconds elapse
+# Update nodes for 2 milliseconds each frame
 var timed_iter := TimedIter.new(get_children(), self, "update_child", 2)
 Worker.run_async(timed_iter, "call_func")
 ```
 
 ### Callable
 
-The custom implementation of `FuncRef`. The main benefit of `Callable` is it will increment the refrence counter for instances passed in.
+A custom implementation of `FuncRef`. The main benefit of `Callable` is it will increment the refrence counter for instances passed in.
 
 ### Cancelling
 
@@ -143,24 +152,24 @@ The `Silk` class simplifies complex Nylon tasks using the builder pattern.
 It can transform a redundant expression like:
 
 ```gdscript
-var timed_weak := WeakCallable.new(weakref(self), "print_wait")
-var timed_resume := TimedResume.new(timed_weak, "call_func", 5)
-var timed_start := TimedCallable.new(timed_resume, "call_func", 50)
-Worker.run_async(timed_start, "call_func", 1)
+var delayed_weak := WeakCallable.new(weakref(self), "print_wait")
+var delayed_resume := DelayedResume.new(delayed_weak, "call_func", 5)
+var delayed_start := DelayedCallable.new(delayed_resume, "call_func", 50)
+Worker.run_async(delayed_start, "call_func", 3)
 ```
 
 into the following:
 
 ```gdscript
 Silk.new(weakref(self), "print_wait") \ # the base function
-  .timed_resume(5) \ # wait 5 milliseconds after each yield
-  .timed_callable(50) \ # wait 50 milliseconds before each retry
-  .submit(Worker, 1) # tell worker to run the job once async
+  .delayed_resume(5) \ # wait 5 milliseconds after each yield
+  .delayed_callable(50) \ # wait 50 milliseconds before each retry
+  .submit(Worker, 3) # tell worker to run the job three times async
 ```
 
 Always remember that jobs are evaluated from bottom to top. In the above example it would be:
-1. `timed_callable`
-2. `timed_resume`
+1. `delayed_callable`
+2. `delayed_resume`
 3. `print_wait`
 
 Passing a `WeakRef` into the contructor of `Silk` will create a `WeakCallable` and will automatically destroy the Nylon job when the instance is freed. Every other instance type will be handled normally meaning Nylon will contribute to the use count of `Reference` and you must manually cancel jobs using an `Object` before freeing them.

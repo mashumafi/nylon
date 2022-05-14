@@ -47,7 +47,7 @@ func _ready() -> void:
 func run_async(instance, funcname: String, replay = 1) -> Coroutine:
     var job := Silk.new(weakref(instance), funcname) \
         .timed_resume(resume_delay) \
-        .timed_callable(start_delay) \
+        .delayed_callable(start_delay) \
         .build(replay)
     _coroutine = Coroutine.new(Callable.new(job[0], job[1]), job[2])
     return _coroutine

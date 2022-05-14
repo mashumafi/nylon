@@ -1,7 +1,5 @@
 extends Node
 
-var InteractiveLoader := preload("res://addons/nylon/common/interactive_loader.gd")
-
 class Test:
     func count_to_10():
         for i in range(10):
@@ -25,6 +23,9 @@ class Sum:
     func increment(num: int):
         count += num
         return float(count)
+
+func print_waiting_500():
+    print("Waiting 500 ms")
 
 class WeakTest:
     extends Reference
@@ -51,9 +52,10 @@ func _ready() -> void:
         yield(repeat_job, "ended")
     yield(repeat_job, "completed")
 
-    var loader := InteractiveLoader.new(["addons/nylon/icon.png"])
-    var load_job := Worker.run_async(loader, "load_interactive")
+    var loader := AsyncResourceLoader.new("addons/nylon/icon.png")
+    var load_job := Worker.run_async(loader, "call_func")
     var res = yield(load_job, "completed")
+    assert(res is Texture)
     print(res)
 
     var weak := WeakTest.new()
@@ -92,23 +94,42 @@ func _ready() -> void:
 
     print("waiting...")
     var timed_weak := WeakCallable.new(weakref(self), "print_wait")
-    var timed_resume := TimedResume.new(timed_weak, "call_func", 5)
-    var timed_start := TimedCallable.new(timed_resume, "call_func", 50)
+    var timed_resume := DelayedResume.new(timed_weak, "call_func", 5)
+    var timed_start := DelayedCallable.new(timed_resume, "call_func", 50)
     var timed_job = Worker.run_async(timed_start, "call_func")
     assert(yield(timed_job, "completed") == "result")
 
     print("waiting for silk...")
     var silk_timed_job = Silk.new(self, "print_wait") \
-        .timed_resume(5) \
-        .timed_callable(50) \
+        .delayed_resume(5) \
+        .delayed_callable(50) \
         .submit(Worker)
     assert(yield(silk_timed_job, "completed") == "result")
+
+    print("Prints twice {")
+    var timed_new := Silk.new(self, "sleep_ms") \
+        .timed_resume(15) \
+        .submit(Worker)
+    yield(timed_new, "completed")
+    print("} Prints twice")
+
+    print("Starting..")
+    var delayed_callable := Silk.new(self, "print_waiting_500") \
+        .delayed_callable(500) \
+        .submit(Worker, 3)
+    yield(delayed_callable, "completed")
+    print("..Done")
 
     finished_work = true
     print("Finished")
 
     var unfinished_job := Worker.run_async(Test.new(), "count_to_10") # Test should live on
     assert(get_tree().connect("idle_frame", self, "wait_for_job", [unfinished_job]) == OK)
+
+func sleep_ms():
+    for i in range(5):
+        OS.delay_usec(1)
+        yield()
 
 func wait_for_job(unfinished_job: Coroutine):
     assert(yield(unfinished_job, "completed") == 10)

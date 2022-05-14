@@ -44,7 +44,7 @@ func _update_state(result):
 # Coroutines that return `false` will cancel and end execution
 # Emits `started`, `ended` and `completed`
 func resume() -> void:
-    var cancelled : bool = self._result is bool and self._result
+    var cancelled: bool = self._result is bool and self._result
     if self._state is GDScriptFunctionState:
         self._update_state(self._state.resume())
     elif self._replay is int and 0 < self._replay and not cancelled:
