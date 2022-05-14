@@ -155,7 +155,7 @@ It can transform a redundant expression like:
 var delayed_weak := WeakCallable.new(weakref(self), "print_wait")
 var delayed_resume := DelayedResume.new(delayed_weak, "call_func", 5)
 var delayed_start := DelayedCallable.new(delayed_resume, "call_func", 50)
-Worker.run_async(delayed_start, "call_func", 1)
+Worker.run_async(delayed_start, "call_func", 3)
 ```
 
 into the following:
@@ -164,7 +164,7 @@ into the following:
 Silk.new(weakref(self), "print_wait") \ # the base function
   .delayed_resume(5) \ # wait 5 milliseconds after each yield
   .delayed_callable(50) \ # wait 50 milliseconds before each retry
-  .submit(Worker, 1) # tell worker to run the job once async
+  .submit(Worker, 3) # tell worker to run the job three times async
 ```
 
 Always remember that jobs are evaluated from bottom to top. In the above example it would be:
