@@ -19,11 +19,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/nylon/scripts/batch_iter.gd"
 }, {
-"base": "Nylon",
-"class": "Cacoon",
-"language": "GDScript",
-"path": "res://addons/nylon/scripts/cacoon.gd"
-}, {
 "base": "Reference",
 "class": "Coroutine",
 "language": "GDScript",
@@ -38,6 +33,16 @@ _global_script_classes=[ {
 "class": "DelayedResume",
 "language": "GDScript",
 "path": "res://addons/nylon/scripts/delayed_resume.gd"
+}, {
+"base": "Reference",
+"class": "FrameCallable",
+"language": "GDScript",
+"path": "res://addons/nylon/scripts/frame_callable.gd"
+}, {
+"base": "Reference",
+"class": "FrameResume",
+"language": "GDScript",
+"path": "res://addons/nylon/scripts/frame_resume.gd"
 }, {
 "base": "Node",
 "class": "Nylon",
@@ -67,10 +72,11 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "AsyncResourceLoader": "",
 "BatchIter": "",
-"Cacoon": "",
 "Coroutine": "",
 "DelayedCallable": "",
 "DelayedResume": "",
+"FrameCallable": "",
+"FrameResume": "",
 "Nylon": "",
 "Silk": "",
 "TimedIter": "",

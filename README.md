@@ -81,9 +81,29 @@ var delayed_resume := TimedResume.new(self, "update_nodes", 50)
 Worker.run_async(delayed_resume, "call_func")
 ```
 
+### FrameCallable
+
+Waits the requested number of idle frames after calling the coroutine. This delay occurs before each retry.
+
+```gdscript
+# Update all nodes forever with a 16 idle frames between each update
+var frame_callable := FrameCallable.new(self, "update_nodes", 16)
+Worker.run_async(frame_callable, "call_func", true) # true to repeat forever
+```
+
+### FrameResume
+
+Waits the requested number of idle frames after each `yield`. This allows workers to take breaks between chunks.
+
+```gdscript
+# Update 1 node every 3 frames
+var frame_resume := FrameResume.new(self, "update_nodes", 3)
+Worker.run_async(frame_resume, "call_func")
+```
+
 ### TimedResume
 
-Processes a coroutine and `yield` control after  `timeout`.
+Processes a coroutine and `yield` control after `timeout`.
 
 ```gdscript
 # Update nodes for 3 milliseconds of each frame.

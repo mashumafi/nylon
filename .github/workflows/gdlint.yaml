@@ -1,0 +1,13 @@
+name: GdLint project
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Docker Compose GdLint
+      run: docker-compose run gdlint
