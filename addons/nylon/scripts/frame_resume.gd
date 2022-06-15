@@ -1,31 +1,31 @@
-# DelayedResume
+# FrameResume
 # Adds a delay after yielding from a coroutine
 
-class_name DelayedResume
+class_name FrameResume
 extends Reference
 
 const Callable := preload("callable.gd")
 
 var callable: Callable
-var delay: int
+var frames: int
 
 
-# TimedResume.new(instance: Object, funcname: String, delay : int)
+# FrameResume.new(instance: Object, funcname: String, frames : int)
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
-# delay (int): Time in milliseconds to wait after yielding
-func _init(instance, funcname: String, delay: int):
+# frames (int): Number of frames to wait after yielding
+func _init(instance, funcname: String, frames: int):
 	self.callable = Callable.new(instance, funcname)
-	self.delay = delay
+	self.frames = frames
 
 
 # call_func():
-# Resumes the function after `delay` elapses
+# Resumes the function after `frames` pass
 func call_func():
 	var state = self.callable.call_func()
 	while state is GDScriptFunctionState:
-		var time := OS.get_system_time_msecs() + self.delay
-		while OS.get_system_time_msecs() < time:
+		var target_frames := Engine.get_idle_frames() + self.frames
+		while Engine.get_idle_frames() < target_frames:
 			yield()
 		state = state.resume()
 	return state

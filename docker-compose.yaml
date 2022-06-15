@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+
+  gdlint:
+    build:
+      context: dockerfiles
+      dockerfile: gdtoolkit.Dockerfile
+    volumes:
+      - .:/workdir
+    command: gdlint addons/nylon
+
+  gdformat:
+    build:
+      context: dockerfiles
+      dockerfile: gdtoolkit.Dockerfile
+    volumes:
+      - .:/workdir
+    command: gdformat addons/nylon

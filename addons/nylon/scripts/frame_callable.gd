@@ -1,29 +1,29 @@
-# DelayedCallable
+# FrameCallable
 # Adds a delay after calling a coroutine
 
-class_name DelayedCallable
+class_name FrameCallable
 extends Reference
 
 const Callable := preload("callable.gd")
 
 var callable: Callable
-var delay: int
-var last_finished := 0
+var frames: int
+var target_frames := 0
 
 
-# DelayedCallable.new(instance: Object, funcname: String, delay : int)
+# FrameCallable.new(instance: Object, funcname: String, frames : int)
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
-# delay (int): Time in milliseconds to wait before a retry
-func _init(instance, funcname: String, delay: int):
+# frames (int): Number of frames to wait before a retry
+func _init(instance, funcname: String, frames: int):
 	self.callable = Callable.new(instance, funcname)
-	self.delay = delay
+	self.frames = frames
 
 
 # call_func()
-# Calls the function after `delay` elapses
+# Calls the function after `frames` passed
 func call_func():
-	while OS.get_system_time_msecs() < last_finished:
+	while Engine.get_idle_frames() < target_frames:
 		yield()
 
 	var state = self.callable.call_func()
@@ -31,5 +31,5 @@ func call_func():
 		yield()
 		state = state.resume()
 
-	last_finished = OS.get_system_time_msecs() + self.delay
+	target_frames = Engine.get_idle_frames() + self.frames
 	return state
