@@ -13,7 +13,7 @@ var frames: int
 # FrameResume.new(instance: Object, funcname: String, frames : int)
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
-# frames (int): Number of frames to wait after yielding
+# frames (int): Number of idle frames to wait after yielding
 func _init(instance, funcname: String, frames: int):
 	self.callable = Callable.new(instance, funcname)
 	self.frames = frames

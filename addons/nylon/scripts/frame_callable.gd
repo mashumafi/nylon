@@ -14,7 +14,7 @@ var target_frames := 0
 # FrameCallable.new(instance: Object, funcname: String, frames : int)
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
-# frames (int): Number of frames to wait before a retry
+# frames (int): Number of idle frames to wait before a retry
 func _init(instance, funcname: String, frames: int):
 	self.callable = Callable.new(instance, funcname)
 	self.frames = frames
