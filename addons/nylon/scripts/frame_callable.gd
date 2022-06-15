@@ -1,5 +1,5 @@
 # FrameCallable
-# Adds a delay after calling a coroutine
+# Waits the requested number of idle frames after calling a coroutine
 
 class_name FrameCallable
 extends Reference
@@ -21,7 +21,7 @@ func _init(instance, funcname: String, frames: int):
 
 
 # call_func()
-# Calls the function after `frames` passed
+# Calls the function after `frames` idle frames has passed
 func call_func():
 	while Engine.get_idle_frames() < target_frames:
 		yield()

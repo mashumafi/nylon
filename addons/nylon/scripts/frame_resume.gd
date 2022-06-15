@@ -1,5 +1,5 @@
 # FrameResume
-# Adds a delay after yielding from a coroutine
+# Waits the requested number of idle frames after yielding from a coroutine
 
 class_name FrameResume
 extends Reference
@@ -20,7 +20,7 @@ func _init(instance, funcname: String, frames: int):
 
 
 # call_func():
-# Resumes the function after `frames` pass
+# Resumes the function after `frames` idle frames has pass
 func call_func():
 	var state = self.callable.call_func()
 	while state is GDScriptFunctionState:
