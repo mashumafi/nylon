@@ -41,6 +41,23 @@ func submit_update():
 
 Now Nylon will now update 1 node over the next hundred frames which could improve the user experience.
 
+## Settings
+
+Settings can be found under the `Nylon` section in the project settings.
+
+![Settings](screenshots/settings.png)
+
+### Add Singleton
+
+Adds a `Worker` singleton. If you prefer to do this on your own or use local nodes then disable this feature.
+
+### Process Timeout
+
+The amount of time (in milliseconds) spent processing coroutines in a single frame.
+Nylon uses a round-robin queue to process tasks.
+Setting a value of 0 will process 1 task per frame.
+Lower numbers may improve frame rates if the queue grows large.
+
 ## Usage
 
 The main entry point for Nylon is the function `Worker.run_async(instance, funcname, retry)`.
