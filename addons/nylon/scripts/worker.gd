@@ -18,10 +18,15 @@ func run_async(instance, funcname: String, replay = 1) -> Coroutine:
 # _run_coroutines()
 # Runs all coroutines and throws away ones that are no longer valid
 func _run_coroutines():
-	var valid_coroutines := _coroutines.duplicate()
-	_coroutines.clear()
-	for coroutine in valid_coroutines:
+	var start := OS.get_system_time_msecs()
+	var processed_coroutines := []
+	while not _coroutines.empty():
+		var coroutine = _coroutines.pop_front()
 		coroutine.resume()
+		processed_coroutines.append(coroutine)
+		if OS.get_system_time_msecs() - start > process_timeout:
+			break
+	for coroutine in processed_coroutines:
 		_append_coroutine(coroutine)
 
 
