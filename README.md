@@ -13,6 +13,23 @@ Threading can be used to improve performance or allow running logic seperate fro
 
 Nylon makes use of the `yield` keyword which creates a `GDScriptFunctionState` which can be used to `resume` a function. It calls `resume` on each frame which allows users to compute chunks at a time and not hog processing time. It uses the main thread so you avoid issues above with threads but still requires users to chunk work using `yield` to give back control to the main game loop.
 
+## Settings
+
+Settings can be found under the `Nylon` section in the project settings.
+
+![Settings](screenshots/settings.png)
+
+### Add Singleton
+
+Adds a `Worker` singleton. If you prefer to do this on your own or use local nodes then disable this feature.
+
+### Process Timeout
+
+The amount of time (in milliseconds) spent processing coroutines in a single frame.
+Nylon uses a round-robin queue to process tasks.
+Setting a value of 0 will process 1 task per frame.
+Lower numbers may improve frame rates if the queue grows large.
+
 ## Example
 
 Say you have the following function which when called users will see a noticeable number of frames dropped.
