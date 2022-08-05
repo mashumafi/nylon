@@ -6,19 +6,19 @@ extends Reference
 
 const Callable := preload("callable.gd")
 
-var iterator
 var callable: Callable
+var iterator
 var batch_size: int
 
 
-# BatchIter.new(iterator: Iterator, instance: Object, funcname: String, batch_size : int)
-# iterator (Iterator): The iterator to call functions on
+# BatchIter.new(instance: Object, funcname: String, iterator: Iterator, batch_size : int)
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
+# iterator (Iterator): The iterator to call functions on
 # batch_size (int): The max number of items to process per call
-func _init(iterator, instance, funcname: String, batch_size: int):
-	self.iterator = iterator
+func _init(instance, funcname: String, iterator, batch_size: int):
 	self.callable = Callable.new(instance, funcname)
+	self.iterator = iterator
 	self.batch_size = batch_size
 
 

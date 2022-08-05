@@ -148,7 +148,7 @@ Call the provided function on each item in `iterator` in chunks based on `batch_
 
 ```gdscript
 # Update 2 nodes per frame
-var batch_iter := BatchIter.new(get_children(), self, "update_child", 2)
+var batch_iter := BatchIter.new(self, "update_child", get_children(), 2)
 Worker.run_async(batch_iter, "call_func")
 ```
 
@@ -158,7 +158,7 @@ Call the provided function on each item in `iterator` in chunks based on `timeou
 
 ```gdscript
 # Update nodes for 2 milliseconds each frame
-var timed_iter := TimedIter.new(get_children(), self, "update_child", 2)
+var timed_iter := TimedIter.new(self, "update_child", get_children(), 2)
 Worker.run_async(timed_iter, "call_func")
 ```
 

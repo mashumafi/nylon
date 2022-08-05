@@ -6,19 +6,19 @@ extends Reference
 
 const Callable := preload("callable.gd")
 
-var iterator
 var callable: Callable
+var iterator
 var timeout: int
 
 
-# TimedIter.new(iterator: Iterator, instance: Object, funcname: String, timeout : int)
-# iterator (Iterator): The iterator to call functions on
+# TimedIter.new(instance: Object, funcname: String, iterator: Iterator, timeout : int)
 # instance (Object): object to call a function
 # funcname (String): name of the function to call
+# iterator (Iterator): The iterator to call functions on
 # timeout (int): Time in milliseconds to spend processing
-func _init(iterator, instance, funcname: String, timeout: int):
-	self.iterator = iterator
+func _init(instance, funcname: String, iterator, timeout: int):
 	self.callable = Callable.new(instance, funcname)
+	self.iterator = iterator
 	self.timeout = timeout
 
 
