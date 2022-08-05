@@ -44,7 +44,7 @@ func _update_state(result):
 # resume()
 # Resumes processing the function
 # Decrements the `replay` by 1 when using an `int`
-# Coroutines that return `true` will be canceled and end execution
+# Coroutines that return exactly `true` will be canceled and end execution
 # Emits `started`, `ended` and `completed`
 func resume() -> void:
 	var cancelled: bool = (self._result is bool and self._result) or not self._callable
@@ -54,7 +54,7 @@ func resume() -> void:
 		self.emit_signal("started")
 		self._update_state(self._callable.call_func())
 		self._replay -= 1
-	elif self._replay is bool and true == self._replay and not cancelled:
+	elif self._replay is bool and self._replay and not cancelled:
 		self.emit_signal("started")
 		self._update_state(self._callable.call_func())
 	else:

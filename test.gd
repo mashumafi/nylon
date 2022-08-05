@@ -71,7 +71,7 @@ func _ready() -> void:
 	assert(count > 0)
 
 	var sum := Sum.new()
-	var batch_iter := BatchIter.new([1, 1, 2, 3, 5], sum, "increment", 2)
+	var batch_iter := BatchIter.new(sum, "increment", [1, 1, 2, 3, 5], 2)
 	var batch_job := Worker.run_async(batch_iter, "call_func")
 	assert(yield(batch_job, "completed") == 12.0)
 	assert(sum.count == 12)
@@ -90,7 +90,7 @@ func _ready() -> void:
 	assert(yield(cancel_job_wait, "ended") == 26.0) # `completed` won't be called
 	assert(sum.count == 26)
 
-	var timed_iter := TimedIter.new([1, 1, 2, 3, 5], sum, "increment", 1)
+	var timed_iter := TimedIter.new(sum, "increment", [1, 1, 2, 3, 5], 1)
 	var timed_iter_job := Worker.run_async(timed_iter, "call_func")
 	assert(yield(timed_iter_job, "completed") == 38.0)
 	assert(sum.count == 38)
