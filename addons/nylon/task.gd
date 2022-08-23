@@ -124,5 +124,5 @@ func cancel():
 
 
 ## Stops the task from repeating.
-func stop_repeating():
+func stop():
 	_config.repeat(0)

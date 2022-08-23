@@ -116,11 +116,19 @@ Eventually all jobs come to an end. Nylon manages tasks on it's own but you have
 
 #### Forced
 
-Call `cancel` on a task returned by Nylon in order to end the task.
+You can stop a task from repeating with `stop`.
 
 ```gd
 var task := NylonWorker.create_task(update_nodes)
-task.cancel() # Cancel the job
+task.stop() # Stop repeating the task
+```
+
+Call `cancel` on a task returned by Nylon in order to end the task.
+This means it won't finish resuming leaving the current job unfinished.
+
+```gd
+var task := NylonWorker.create_task(update_nodes)
+task.cancel() # Cancel the job immediately
 ```
 
 A job can also cancel itself by returning a `Cancel` object.
