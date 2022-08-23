@@ -97,13 +97,17 @@ How many times to repeat the function. By default tasks are only run once. Suppl
 
 ## Tasks
 
+`NylonWorker` returns a task once created. You can use that task to wait or even cancel it.
+
 ## Waiting
 
-`NylonWorker` returns a task once created. You can use that task to wait or even cancel it. The `completed` signal will wait until the jobs ends and will return the final result of `return`.
+The `completed` signal will wait until the jobs ends and will return the final result of `return`.
 
 ```gd
 var task := NylonWorker.create_task(update_nodes)
-var result := await task.completed
+await task.completed
+if task.is_done(): # Check if the task completed successfully
+  print(task.get_result())
 ```
 
 ### Cancelling
@@ -117,6 +121,14 @@ Call `cancel` on a task returned by Nylon in order to end the task.
 ```gd
 var task := NylonWorker.create_task(update_nodes)
 task.cancel() # Cancel the job
+```
+
+A job can also cancel itself by returning a `Cancel` object.
+
+```gd
+func update_nodes(resume):
+  # .. An error occurred
+  return NylonTask.Cancel.new() # Stop executing
 ```
 
 #### Expired Tasks

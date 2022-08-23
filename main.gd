@@ -25,6 +25,11 @@ class Temp:
 			await resume
 
 
+func cancelled_function(_resume: Signal):
+	print("Cancelling")
+	return NylonTask.Cancel.new()
+
+
 func _ready():
 	var config := NylonConfig.new()
 	config.run_for(25).milliseconds()
@@ -46,5 +51,16 @@ func _ready():
 	config.repeat(-1)
 	NylonWorker.create_task(temp.do_work, config)
 	await get_tree().create_timer(1).timeout
+
+	config = NylonConfig.new()
+	config.run_for(25).milliseconds()
+	config.resume_after(120).frames()
+	config.repeat(-1)
+	task = NylonWorker.create_task(cancelled_function, config)
+	await task.finished
+	assert(not task.is_done())
+	assert(task.get_result() == null)
+
+	print("Ready...")
 
 	#get_tree().quit()

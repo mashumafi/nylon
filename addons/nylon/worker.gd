@@ -1,12 +1,15 @@
 extends Node
 
+
 var _tasks : Array[NylonTask] = []
 
 
+## Adds a task to Nylon.
 func add_task(task: NylonTask) -> void:
 	_tasks.append(task)
 
 
+## Creates a task from a [code]Callable[/code] and [code]NylonConfig[/code].
 func create_task(callable: Callable, config := NylonConfig.new()) -> NylonTask:
 	var task := NylonTask.new(callable, config)
 	add_task(task)
@@ -47,7 +50,7 @@ func _process(_delta: float) -> void:
 		var task : NylonTask = _tasks.pop_front()
 		task.resume()
 
-		if task.is_done():
+		if not task.is_done():
 			processed_tasks.push_back(task)
 		processed_count += 1
 
