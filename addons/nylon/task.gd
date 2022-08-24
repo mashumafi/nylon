@@ -12,9 +12,10 @@ class Cancel:
 
 ## Will emit once the task is completes.
 ## Check `is_done` to determine if the task was completed successfully.
+## [code]get_result()[/code] will return the final result of the task.
 signal finished()
 ## Nylon's way of giving permission to resume processing.
-## Use [code]await resumed[/code] to wait for permission.
+## Use [code]await resumed[/code] to ask for permission.
 signal resumed()
 
 

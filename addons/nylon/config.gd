@@ -7,9 +7,13 @@ class Timed:
 	extends RefCounted
 
 
+	## Convert milliseconds to seconds.
 	const SECONDS := 1.0 / 1000.0
+	## Convert milliseconds to minutes.
 	const MINUTES := SECONDS / 60.0
+	## Convert milliseconds to hours.
 	const HOURS := MINUTES / 60.0
+	## Convert milliseconds to days.
 	const DAYS := HOURS / 24.0
 
 
