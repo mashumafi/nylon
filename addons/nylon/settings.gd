@@ -2,13 +2,10 @@ class_name NylonSettings
 extends RefCounted
 
 
-enum TimeScale {MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS}
-
-
 const WORKER_RUN_TIMEOUT := "nylon/worker/run_timeout"
 const WORKER_RUN_TIMEOUT_DEFAULT := 3.0
 const WORKER_RUN_TIMESCALE := "nylon/worker/run_timescale"
-const WORKER_RUN_TIMESCALE_DEFAULT := TimeScale.MILLISECONDS
+const WORKER_RUN_TIMESCALE_DEFAULT := NylonConfig.Timed.TimeScale.MILLISECONDS
 
 
 class StringConversion:
@@ -16,10 +13,11 @@ class StringConversion:
 		var next_upper := true
 		var output := ""
 		for c in s:
-			if c == "_":
+			var ch : String = c
+			if ch == "_":
 				next_upper = true
 				continue
-			output += c.to_upper() if next_upper else c.to_lower()
+			output += ch.to_upper() if next_upper else ch.to_lower()
 			next_upper = false
 		return output
 
@@ -30,7 +28,7 @@ static func enum_to_hint(enumeration: Dictionary) -> String:
 
 
 static func timescale_to_enum_hint() -> String:
-	return enum_to_hint(TimeScale)
+	return enum_to_hint(NylonConfig.Timed.TimeScale)
 
 
 static func create_project_settings() -> void:
@@ -71,3 +69,9 @@ static func get_worker_run_timeout() -> float:
 
 static func get_worker_run_timescale() -> int:
 	return get_setting(WORKER_RUN_TIMESCALE, WORKER_RUN_TIMESCALE_DEFAULT)
+
+
+static func get_worker_run_timer() -> NylonConfig.Timed:
+	var time := NylonConfig.Timed.new(get_worker_run_timeout())
+	time.set_timescale(get_worker_run_timescale())
+	return time

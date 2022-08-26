@@ -2,48 +2,22 @@ extends Node
 
 
 var _tasks : Array[NylonTask] = []
+var _run_time := NylonSettings.get_worker_run_timer()
 
 
-## Adds a task to Nylon.
-func add_task(task: NylonTask) -> void:
-	_tasks.append(task)
-
-
-## Creates a task from a [code]Callable[/code] and [code]NylonConfig[/code].
+## Creates a task from a [Callable] and [NylonConfig].
 func create_task(callable: Callable, config := NylonConfig.new()) -> NylonTask:
 	var task := NylonTask.new(callable, config)
-	add_task(task)
+	_tasks.append(task)
 	return task
-
-
-func get_ticks(timescale: int) -> float:
-	var time := NylonConfig.Timed.new()
-	match timescale:
-		NylonSettings.TimeScale.MICROSECONDS:
-			time.microseconds()
-		NylonSettings.TimeScale.MILLISECONDS:
-			time.milliseconds()
-		NylonSettings.TimeScale.SECONDS:
-			time.seconds()
-		NylonSettings.TimeScale.MINUTES:
-			time.minutes()
-		NylonSettings.TimeScale.HOURS:
-			time.hours()
-		NylonSettings.TimeScale.DAYS:
-			time.days()
-	return time.get_ticks()
-
-
-func get_run_ticks() -> float:
-	return get_ticks(NylonSettings.get_worker_run_timescale())
 
 
 func _process(_delta: float) -> void:
 	var processed_tasks : Array[NylonTask] = []
 	var processed_count := 0
-	var start := get_run_ticks()
+	var start := _run_time.get_ticks()
 	while not _tasks.is_empty():
-		if processed_count > 0 and _tasks.front().is_running() and get_run_ticks() - start > NylonSettings.get_worker_run_timeout():
+		if processed_count > 0 and _tasks[0].is_running() and _run_time.is_elapsed(start):
 			print_debug("Nylon task load is heavy, will continue processing next frame")
 			break
 

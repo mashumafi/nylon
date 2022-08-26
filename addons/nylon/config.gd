@@ -1,10 +1,32 @@
+## Configures a [NylonTask]
+##
+## Configures:[br]
+## * How long to run a task.[br]
+## * How long to wait before resuming.[br]
+## * How long to wait before repeating.[br]
+## * How many times to repeat.
 class_name NylonConfig
 extends RefCounted
 
 
 ## Use for computing timespans.
+##
+## Only the [method microseconds] will use microsecond precision.
+## All other functions use millisecond precision.
+## 
 class Timed:
 	extends RefCounted
+
+
+	## Time scale units.
+	enum TimeScale {
+		MICROSECONDS, ## Timespan will be in microseconds
+		MILLISECONDS, ## Timespan will be in milliseconds
+		SECONDS, ## Timespan will be in seconds
+		MINUTES, ## Timespan will be in minutes
+		HOURS, ## Timespan will be in hours
+		DAYS, ## Timespan will be in days
+	}
 
 
 	## Convert milliseconds to seconds.
@@ -21,6 +43,8 @@ class Timed:
 	var _eval : Callable
 
 
+	## [code]Timed[/code] will wait [code]0[/code] milliseconds by default.
+	## Set [code]time[/code] and call a function to choose the timescale.
 	func _init(time := 0.0):
 		self._time = time
 		self.milliseconds()
@@ -56,12 +80,31 @@ class Timed:
 		_eval = _convert_time.bind(Time.get_ticks_msec, DAYS)
 
 
+	## Set the timescale using [code]TimeScale[/code].
+	## Affects the value returned by [method get_ticks].
+	func set_timescale(timescale: int):
+		match timescale:
+			TimeScale.MICROSECONDS:
+				microseconds()
+			TimeScale.MILLISECONDS:
+				milliseconds()
+			TimeScale.SECONDS:
+				seconds()
+			TimeScale.MINUTES:
+				minutes()
+			TimeScale.HOURS:
+				hours()
+			TimeScale.DAYS:
+				days()
+
+
 	## Gets ticks using the current timescale.
 	func get_ticks() -> float:
 		return _eval.call()
 
 
 	## Check if the number of ticks has elapsed.
+	## [code]start[/code] the starting number of ticks.
 	func is_elapsed(start: float) -> bool:
 		return get_ticks() - start > _time
 
@@ -70,22 +113,31 @@ class Timed:
 		return callable.call() * mult
 
 
-class RunFor:
-	extends Timed
-
-	func _init(time := 0.0):
-		super(time)
-
-
+## [code]Delay[/code] is used for waiting a certain amount of duration.
+##
+## Along with waiting for a time duration,
+## [code]Delay[/code] supports various frame durations.
 class Delay:
 	extends Timed
 
+	## [code]Delay[/code] will wait [code]0[/code] milliseconds by default.
+	## Set [code]time[/code] and call a function to choose the timescale.
 	func _init(time := 0.0):
 		super(time)
 
-	## The number of frames to wait.
-	func frames():
+	## Use number of process frames as timescale.
+	func process_frames():
 		_eval = Engine.get_process_frames
+
+
+	## Use number of physics frames as timescale.
+	func physics_frames():
+		_eval = Engine.get_physics_frames
+
+
+	## Use number of frames drawn as timescale.
+	func frames_drawn():
+		_eval = Engine.get_frames_drawn
 
 
 class Repeat:
@@ -101,7 +153,7 @@ class Repeat:
 		return _amount == -1 or amount < self._amount
 
 
-var _run_for := RunFor.new(0)
+var _run_for := Timed.new(0)
 var _resume_after := Delay.new(0)
 var _repeat_after := Delay.new(0)
 var _repeat := Repeat.new(1)
@@ -110,7 +162,7 @@ var _repeat := Repeat.new(1)
 ## How long to run the task.
 ## Defaults to run for [code]0[/code] milliseconds.
 ## [code]time[/code] will use milliseconds by default but the timescale can be adjusted with the returned value.
-func run_for(time: float) -> RunFor:
+func run_for(time: float) -> Timed:
 	_run_for._time = time
 	return _run_for
 

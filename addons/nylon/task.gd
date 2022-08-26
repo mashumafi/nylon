@@ -1,18 +1,23 @@
 ## A task managed by Nylon.
+##
 ## Should not be created directly,
 ## instead create tasks with [code]NylonWorker.create_task(...)[/code].
 class_name NylonTask
 extends RefCounted
 
 
-## An object used to cancel a [code]NylonTask[/code]
+## An object used to cancel a [NylonTask].
 ## [code]return[/code] it from a job you want to cancel.
+## [codeblock]
+## func job(resume):
+##     return NylonTask.Cancel.new()
+## [/codeblock]
 class Cancel:
 	extends Object
 
 ## Will emit once the task is completes.
-## Check `is_done` to determine if the task was completed successfully.
-## [code]get_result()[/code] will return the final result of the task.
+## Check [method is_done] to determine if the task was completed successfully.
+## [method get_result] will return the final result of the task.
 signal finished()
 ## Nylon's way of giving permission to resume processing.
 ## Use [code]await resumed[/code] to ask for permission.
@@ -20,12 +25,13 @@ signal resumed()
 
 
 ## State of the task.
-## [code]READY[/code] means the job will start when [code]resume[/code] is called.
-## [code]RUNNING[/code] means the job has started and will continue processing when [code]resume[/code] is called.
-## [code]WAIT_REPEAT[/code] means the job will start again after waiting.
-## [code]WAIT_RESUME[/code] means the job will continue after waiting.
-## [code]DONE[/code] means [code]resume[/code] no longer does anything.
-enum State {READY, RUNNING, WAIT_RESUME, WAIT_REPEAT, DONE}
+enum State {
+	READY, ## the job will start when [method resume] is called.
+	RUNNING, ## the job has started and will continue processing when [method resume] is called.
+	WAIT_RESUME, ## the job will continue processing after waiting.
+	WAIT_REPEAT, ## the job will begin processing after waiting.
+	DONE ## [method resume] no longer does anything.
+}
 
 
 var _job : Callable
@@ -36,9 +42,17 @@ var _wait_start : float
 var _result = null
 
 
-## Create a task
-## [code]job[/code] is a function which takes 1 argument. The argument is a [code]Signal[/code] that can be used to pause processing.
-## [code]config[/code] is used to configure the job.
+## Create a task.[br]
+## [code]job[/code] is a function which takes 1 argument. The argument is a [Signal] that can be used to pause processing.[br]
+## [code]config[/code] is used to configure the job.[br]
+## You can cancel a task by returning [NylonTask.Cancel] from [code]job[/code].
+## A task will block the main game loop. It is up to you to [code]await resume[/code] to give back control to your game.
+## [codeblock]
+## func job(resume):
+##    for enemy in enemies:
+##        await resume # Ask Nylon for permission to continue
+##        enemy.process_ai()
+## [/codeblock]
 func _init(job: Callable, config := NylonConfig.new()):
 	_job = job
 	_config = config
@@ -46,6 +60,7 @@ func _init(job: Callable, config := NylonConfig.new()):
 
 ## Updates the task's state.
 ## Resume processing the task when it's ready.
+## The state will change only once when called.
 func resume():
 	if _state == State.DONE:
 		return
@@ -59,10 +74,13 @@ func resume():
 		State.READY:
 			_state = State.RUNNING
 			await resumed # Don't start processing right away
+			@warning_ignore(redundant_await)
 			_result = await _job.call(resumed)
 
-			if _result is Cancel:
-				_result.free()
+			@warning_ignore(unsafe_cast)
+			var _cancel := _result as Cancel
+			if _cancel:
+				_cancel.free()
 				_result = null
 				finished.emit()
 				_state = State.DONE

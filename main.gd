@@ -42,7 +42,7 @@ func _ready():
 
 	config = NylonConfig.new()
 	config.run_for(25).milliseconds()
-	config.resume_after(120).frames()
+	config.resume_after(120).process_frames()
 	task = NylonWorker.create_task(do_more_work, config)
 	await task.finished
 
@@ -54,7 +54,7 @@ func _ready():
 
 	config = NylonConfig.new()
 	config.run_for(25).milliseconds()
-	config.resume_after(120).frames()
+	config.resume_after(120).process_frames()
 	config.repeat(-1)
 	task = NylonWorker.create_task(cancelled_function, config)
 	await task.finished

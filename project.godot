@@ -35,11 +35,19 @@ _global_script_class_icons={
 config/name="Nylon"
 run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.0", "Vulkan Clustered")
-config/icon="res://icon.png"
 
 [autoload]
 
 NylonWorker="*res://addons/nylon/worker.gd"
+
+[debug]
+
+gdscript/warnings/treat_warnings_as_errors=true
+gdscript/warnings/exclude_addons=false
+gdscript/warnings/unsafe_property_access=1
+gdscript/warnings/unsafe_method_access=1
+gdscript/warnings/unsafe_cast=1
+gdscript/warnings/unsafe_call_argument=1
 
 [editor_plugins]
 
