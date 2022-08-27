@@ -31,7 +31,8 @@ var _runner := NylonRunner.new()
 
 
 ## Create a task.[br]
-## [code]job[/code] is a function which takes 1 argument. The argument is a [NylonRunner] that can be used to pause processing.[br]
+## [code]job[/code] is a function which takes 1 argument.
+## The argument is a [NylonRunner] that can be used to pause processing.[br]
 ## [code]config[/code] is used to configure the job.[br]
 ## You can cancel a task by calling [method NylonRunner.cancel].
 ## A task will block the main game loop. It is up to you to [code]await runner.resumed[/code] to give back control to your game.
