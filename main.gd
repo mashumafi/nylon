@@ -38,13 +38,13 @@ func _ready():
 	config.repeat(2)
 	var task := NylonWorker.create_task(do_work, config)
 	task = NylonWorker.create_task(do_work, config)
-	await task.finished
+	await task.completed
 
 	config = NylonConfig.new()
 	config.run_for(25).milliseconds()
 	config.resume_after(120).process_frames()
 	task = NylonWorker.create_task(do_more_work, config)
-	await task.finished
+	await task.completed
 
 	var temp := Temp.new()
 	config = NylonConfig.new()
@@ -57,7 +57,7 @@ func _ready():
 	config.resume_after(120).process_frames()
 	config.repeat(-1)
 	task = NylonWorker.create_task(cancelled_function, config)
-	await task.finished
+	await task.completed
 	assert(not task.is_done())
 	assert(task.get_result() == null)
 

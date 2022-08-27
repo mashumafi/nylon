@@ -5,10 +5,10 @@
 class_name NylonTask
 extends RefCounted
 
-## Will emit once the task is completes.
+## Will emit once the task is completed.
 ## Check [method is_done] to determine if the task was completed successfully.
 ## [method get_result] will return the final result of the task.
-signal finished()
+signal completed()
 
 
 ## State of the task.
@@ -55,7 +55,7 @@ func resume():
 		return
 
 	if not _job.is_valid():
-		finished.emit()
+		completed.emit()
 		_state = State.DONE
 		return
 
@@ -68,11 +68,11 @@ func resume():
 
 			if _runner.cancelled:
 				_result = null
-				finished.emit()
+				completed.emit()
 				_state = State.DONE
 				return
 
-			# Job finished
+			# Job completed.
 			_repeats += 1
 			
 			if _config._repeat.is_valid(_repeats):
@@ -80,7 +80,7 @@ func resume():
 				_wait_start = _config._repeat_after.get_ticks()
 			else:
 				_state = State.DONE
-				finished.emit()
+				completed.emit()
 
 		State.WAIT_RESUME:
 			if _config._resume_after.is_elapsed(self._wait_start):
@@ -116,7 +116,7 @@ func is_waiting() -> bool:
 	return _state == State.WAIT_RESUME or _state == State.WAIT_REPEAT
 
 
-## Checks if the task has finished.
+## Checks if the task has completed.
 func is_done() -> bool:
 	return _state == State.DONE
 
@@ -124,7 +124,7 @@ func is_done() -> bool:
 ## Immediately cancels the task.
 func cancel():
 	if _state != State.DONE:
-		finished.emit()
+		completed.emit()
 	_state = State.DONE
 
 

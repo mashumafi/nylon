@@ -101,11 +101,11 @@ How many times to repeat the function. By default tasks are only run once. Suppl
 
 ## Waiting
 
-The `finished` signal will wait until the jobs ends and will return the final result of `return`.
+The `completed` signal will wait until the jobs ends and will return the final result of `return`.
 
 ```gd
 var task := NylonWorker.create_task(update_nodes)
-await task.finished
+await task.completed
 if task.is_done(): # Check if the task completed successfully
   print(task.get_result())
 ```
@@ -125,13 +125,14 @@ task.stop() # Stop repeating the task
 
 Call `cancel` on a task returned by Nylon in order to end the task.
 This means it won't finish resuming leaving the current job unfinished.
+Emits `completed` immedately but the `is_done` function will be `false`.
 
 ```gd
 var task := NylonWorker.create_task(update_nodes)
 task.cancel() # Cancel the job immediately
 ```
 
-A job can also cancel itself by calling a `cancel`.
+A job can also cancel itself by calling a `cancel` on `NylonRunner`.
 
 ```gd
 func update_nodes(runner: NylonRunner):
