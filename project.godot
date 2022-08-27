@@ -15,6 +15,11 @@ _global_script_classes=[{
 "path": "res://addons/nylon/config.gd"
 }, {
 "base": "RefCounted",
+"class": &"NylonRunner",
+"language": &"GDScript",
+"path": "res://addons/nylon/runner.gd"
+}, {
+"base": "RefCounted",
 "class": &"NylonSettings",
 "language": &"GDScript",
 "path": "res://addons/nylon/settings.gd"
@@ -26,6 +31,7 @@ _global_script_classes=[{
 }]
 _global_script_class_icons={
 "NylonConfig": "",
+"NylonRunner": "",
 "NylonSettings": "",
 "NylonTask": ""
 }

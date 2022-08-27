@@ -5,23 +5,10 @@
 class_name NylonTask
 extends RefCounted
 
-
-## An object used to cancel a [NylonTask].
-## [code]return[/code] it from a job you want to cancel.
-## [codeblock]
-## func job(resume):
-##     return NylonTask.Cancel.new()
-## [/codeblock]
-class Cancel:
-	extends Object
-
 ## Will emit once the task is completes.
 ## Check [method is_done] to determine if the task was completed successfully.
 ## [method get_result] will return the final result of the task.
 signal finished()
-## Nylon's way of giving permission to resume processing.
-## Use [code]await resumed[/code] to ask for permission.
-signal resumed()
 
 
 ## State of the task.
@@ -40,17 +27,18 @@ var _state := State.READY
 var _repeats := 0
 var _wait_start : float
 var _result = null
+var _runner := NylonRunner.new()
 
 
 ## Create a task.[br]
-## [code]job[/code] is a function which takes 1 argument. The argument is a [Signal] that can be used to pause processing.[br]
+## [code]job[/code] is a function which takes 1 argument. The argument is a [NylonRunner] that can be used to pause processing.[br]
 ## [code]config[/code] is used to configure the job.[br]
-## You can cancel a task by returning [NylonTask.Cancel] from [code]job[/code].
-## A task will block the main game loop. It is up to you to [code]await resume[/code] to give back control to your game.
+## You can cancel a task by calling [method NylonRunner.cancel].
+## A task will block the main game loop. It is up to you to [code]await runner.resumed[/code] to give back control to your game.
 ## [codeblock]
-## func job(resume):
+## func job(runner: NylonRunner):
 ##    for enemy in enemies:
-##        await resume # Ask Nylon for permission to continue
+##        await runner.resumed # Ask Nylon for permission to continue
 ##        enemy.process_ai()
 ## [/codeblock]
 func _init(job: Callable, config := NylonConfig.new()):
@@ -73,14 +61,11 @@ func resume():
 	match _state:
 		State.READY:
 			_state = State.RUNNING
-			await resumed # Don't start processing right away
+			await _runner.resumed # Don't start processing right away
 			@warning_ignore(redundant_await)
-			_result = await _job.call(resumed)
+			_result = await _job.call(_runner)
 
-			@warning_ignore(unsafe_cast)
-			var _cancel := _result as Cancel
-			if _cancel:
-				_cancel.free()
+			if _runner.cancelled:
 				_result = null
 				finished.emit()
 				_state = State.DONE
@@ -106,9 +91,9 @@ func resume():
 
 		State.RUNNING:
 			var start := _config._run_for.get_ticks()
-			resumed.emit()
+			_runner.resumed.emit()
 			while not _config._run_for.is_elapsed(start) and _state == State.RUNNING:
-				resumed.emit()
+				_runner.resumed.emit()
 
 			if _state == State.RUNNING: # Did state change?
 				_state = State.WAIT_RESUME

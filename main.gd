@@ -1,33 +1,33 @@
 extends Node
 
 
-func do_work(resume: Signal):
+func do_work(runner: NylonRunner):
 	for i in 10:
 		print(i)
 		OS.delay_msec(10)
-		await resume
+		await runner.resumed
 
 
-func do_more_work(resume: Signal):
+func do_more_work(runner: NylonRunner):
 	for i in range(10, 20):
 		print(i)
 		OS.delay_msec(10)
-		await resume
+		await runner.resumed
 
 
 class Temp:
 	extends RefCounted
 
-	func do_work(resume: Signal):
+	func do_work(runner: NylonRunner):
 		for i in 10:
 			print(i)
 			OS.delay_msec(10)
-			await resume
+			await runner.resumed
 
 
-func cancelled_function(_resume: Signal):
+func cancelled_function(runner: NylonRunner):
 	print("Cancelling")
-	return NylonTask.Cancel.new()
+	runner.cancel()
 
 
 func _ready():
