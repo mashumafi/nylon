@@ -26,10 +26,10 @@ func update_nodes():
 The performance issue could be due to having hundreds of nodes to update. If this update could occur in the background and infrequently it might be worth using Nylon to perform the work. Using Nylon this function could be refactored like so:
 
 ```gdscript
-func update_nodes(resume: Signal):
+func update_nodes(runner: NylonRunner):
     for child in get_children():
         update_child(child)
-        await resume
+        await runner.resumed
 ```
 
 It can then be run async by nylon with the following call:
@@ -101,11 +101,11 @@ How many times to repeat the function. By default tasks are only run once. Suppl
 
 ## Waiting
 
-The `completed` signal will wait until the jobs ends and will return the final result of `return`.
+The `finished` signal will wait until the jobs ends and will return the final result of `return`.
 
 ```gd
 var task := NylonWorker.create_task(update_nodes)
-await task.completed
+await task.finished
 if task.is_done(): # Check if the task completed successfully
   print(task.get_result())
 ```
@@ -131,12 +131,12 @@ var task := NylonWorker.create_task(update_nodes)
 task.cancel() # Cancel the job immediately
 ```
 
-A job can also cancel itself by returning a `Cancel` object.
+A job can also cancel itself by calling a `cancel`.
 
 ```gd
-func update_nodes(resume):
-  # .. An error occurred
-  return NylonTask.Cancel.new() # Stop executing
+func update_nodes(runner: NylonRunner):
+  # Processing ...
+  runner.cancel() # Stop executing
 ```
 
 #### Expired Tasks
