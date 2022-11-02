@@ -1,6 +1,6 @@
 ## Used to control a task.
 ##
-## Check if you should task a break with [signal resumed].
+## Check if you should take a break with [signal resumed].
 ## Cancel the task by calling [method cancel].
 class_name NylonRunner
 extends RefCounted
@@ -10,7 +10,7 @@ extends RefCounted
 signal resumed()
 
 ## Check if the task is cancelled.
-var cancelled := true :
+var cancelled := false :
 	get:
 		return cancelled
 

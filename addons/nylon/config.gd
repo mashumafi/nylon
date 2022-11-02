@@ -9,7 +9,7 @@ class_name NylonConfig
 extends RefCounted
 
 
-## Use for computing timespans.
+## Used for computing timespans.
 ##
 ## Only the [method microseconds] will use microsecond precision.
 ## All other functions use millisecond precision.
